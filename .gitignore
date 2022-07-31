@@ -1,2 +1,1 @@
-./terraclope-infra/.terrafrom/*
-terraclope-infra\.terraform
+terraclope-infra/.terraform/*
