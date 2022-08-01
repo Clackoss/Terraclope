@@ -7,7 +7,8 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = { "project" = "${var.tags}" }
 }
 
-###Subnets###
+##REVERSE PROXY RESOUCES##
+
 #Reverse Proxy subnet
 resource "azurerm_subnet" "rp-subnet" {
   name                 = "${var.tags}-rp-subnet"
@@ -17,16 +18,7 @@ resource "azurerm_subnet" "rp-subnet" {
 
 }
 
-#Web server subnet
-resource "azurerm_subnet" "web-subnet" {
-  name                 = "${var.tags}-web-subnet"
-  resource_group_name  = azurerm_resource_group.terraclope_rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.2.0/24"]
-
-}
-
-#Reverso proxy network interface
+#Reverse proxy network interface
 resource "azurerm_network_interface" "reverse_proxy_nic" {
   name                = "${var.tags}-reverse-proxy-nic"
   location            = azurerm_resource_group.terraclope_rg.location
@@ -82,14 +74,61 @@ resource "azurerm_network_security_group" "reverse_proxy_nsg" {
   }
 }
 
-#nsg that allow ssh connection on port 22
-resource "azurerm_network_security_group" "vm_nsg_ssh" {
-  name                = "ssh_nsg"
+
+#associate web nsg with Nic on reverse proxy's nic
+resource "azurerm_network_interface_security_group_association" "reverse_proxy_association" {
+  network_interface_id      = azurerm_network_interface.reverse_proxy_nic.id
+  network_security_group_id = azurerm_network_security_group.reverse_proxy_nsg.id
+  depends_on = [
+    azurerm_network_interface.reverse_proxy_nic,
+    azurerm_network_security_group.reverse_proxy_nsg
+  ]
+}
+
+
+##WEB SERVER RESOUCES##
+
+#Web server subnet
+resource "azurerm_subnet" "web-subnet" {
+  name                 = "${var.tags}-web-subnet"
+  resource_group_name  = azurerm_resource_group.terraclope_rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.2.0/24"]
+
+}
+
+#Web Server network interface
+resource "azurerm_network_interface" "web_server_nic" {
+  name                = "${var.tags}-web-server-nic"
+  location            = azurerm_resource_group.terraclope_rg.location
+  resource_group_name = azurerm_resource_group.terraclope_rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.web-subnet.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+#Nsg that allow connection to http ports
+resource "azurerm_network_security_group" "web_server_nsg" {
+  name                = "web_server_nsg"
   location            = azurerm_resource_group.terraclope_rg.location
   resource_group_name = azurerm_resource_group.terraclope_rg.name
 
   security_rule {
-    name                       = "allow_ssh_sg"
+    name                       = "allow reverse proxy access"
+    priority                   = 1000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = ["80", "443"]
+    source_address_prefix      = azurerm_network_interface.reverse_proxy_nic.private_ip_address
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "allow_ssh"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
@@ -99,24 +138,18 @@ resource "azurerm_network_security_group" "vm_nsg_ssh" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  tags = {
+    environment = var.tags
+  }
 }
 
-#associate web nsg with Nic on reverse proxy's nic
- resource "azurerm_network_interface_security_group_association" "reverse_proxy_association" {
-  network_interface_id      = azurerm_network_interface.reverse_proxy_nic.id
-  network_security_group_id = azurerm_network_security_group.reverse_proxy_nsg.id
+#associate web server nsg with web server's nic
+resource "azurerm_network_interface_security_group_association" "web_server_association" {
+  network_interface_id      = azurerm_network_interface.web_server_nic.id
+  network_security_group_id = azurerm_network_security_group.web_server_nsg.id
   depends_on = [
-    azurerm_network_interface.reverse_proxy_nic,
-    azurerm_network_security_group.reverse_proxy_nsg
+    azurerm_network_interface.web_server_nic,
+    azurerm_network_security_group.web_server_nsg
   ]
 }
-/*
-#associate ssh nsg with Nic on reverse proxy's nic
-resource "azurerm_network_interface_security_group_association" "reverse_proxy_ssh_association" {
-  network_interface_id      = azurerm_network_interface.reverse_proxy_nic.id
-  network_security_group_id = azurerm_network_security_group.vm_nsg_ssh.id
-  depends_on = [
-    azurerm_network_interface.reverse_proxy_nic,
-    azurerm_network_security_group.vm_nsg_ssh
-  ]
-} */

@@ -16,4 +16,5 @@ else {
     #Deploy Terraclope
     cd ./terraclope-infra
     terraform.exe destroy -var="reverse_proxy_password=$($reverseProxyPassword)" -var="web_server_password=$($WebServerPassword)" --auto-approve
+    cd ..
 }
