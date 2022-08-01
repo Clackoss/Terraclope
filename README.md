@@ -58,12 +58,13 @@ Nb : A file named 'index.html' must be present on the folder /var/www/html/
 *You can also refert to apache documentation to use a cleaner way to change ;)*
 
 ## Security Point
-Warring, this architecture is not as secure as it could.
+**Warring, this architecture is not as secure as it could.**
 If you want to improve the security you can start by changes this points : 
 1. ssh is accessible from the internet on reverse proxy.
 2. both vm has ssh authentication via password enabled (should be ssh key)
 3. Vm's are not hardened and the os is not at the latest version
 4. https is not configured
+5. Disable debugg logs on nginx/apache
 
 ## Note
 This is just a little projet for fun :)
