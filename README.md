@@ -66,6 +66,10 @@ If you want to improve the security you can start by changes this points :
 4. https is not configured
 5. Disable debugg logs on nginx/apache
 
+## To summarize :)
+![image info](./img/Terraclope.png)
+
+
 ## Note
 This is just a little projet for fun :)
 Developped by Maxime BOUDIER
