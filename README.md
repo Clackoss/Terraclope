@@ -42,13 +42,13 @@ Open a terminal (powershell or unix)
 
 ```bash
 ssh vmadmin@publicIp
-then enter the reverse proxy password you gives at creation
+then enter the reverse proxy password you give at creation
 ```
 
 Then
 ```bash
 ssh vmadmin@Web-server-private-Ip
-then enter the web server password you gives at creation
+then enter the web server password you give at creation
 ```
 
 Now to change simply the printed web site go on /var/www/html/ delete the content, and put the web site you want (using git, wget or what ever you want).
