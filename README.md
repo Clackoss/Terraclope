@@ -1,4 +1,4 @@
-# TerraClope
+# Terraclope
 ## What is Terraclope ?
 Terraclope is a litte projet in terrafrom to deploy a configured reverse proxy/ web server on azure.
 
