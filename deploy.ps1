@@ -2,7 +2,7 @@
 .DESCRIPTION
 Check if passwords are valid for Azure VMs
 .OUTPUTS
-[Boolean] : $f²²alse if password are not ok, $true else
+[Boolean] : $false if password are not ok, $true else
 #>
 function Get-PasswordValidity {
     param (
@@ -29,7 +29,7 @@ $ArePasswordOk = $false
 $cpt = 0
 while (!$ArePasswordOk) {
     [securestring]$reverseProxyPassword = Read-Host "Reverse Proxy Vm admin password"-AsSecureString
-    [securestring]$WebServerPassword = Read-Host "Reverse Proxy Vm admin password"-AsSecureString
+    [securestring]$WebServerPassword = Read-Host "Web Server Vm admin password"-AsSecureString
     $ArePasswordOk = (Get-PasswordValidity -reverseProxyPassword $reverseProxyPassword -WebServerPassword $WebServerPassword)
     $cpt++
     if ($cpt -gt 5) {
@@ -39,9 +39,6 @@ while (!$ArePasswordOk) {
 
 #Deploy Terraclope
 cd ./terraclope-infra
-terraform.exe apply -var="reverse_proxy_password=$($reverseProxyPassword)" -var="web_server_password=$($WebServerPassword)" --auto-approve
-
-#Set password on a txt file for destroy (comment this line if do not want it)
-(ConvertFrom-SecureString $reverseProxyPassword -AsPlainText) | Set-content ../password.txt -force
-(ConvertFrom-SecureString $WebServerPassword -AsPlainText) >> ../password.txt
+terraform.exe apply -var="reverse_proxy_password=$((ConvertFrom-SecureString $reverseProxyPassword -AsPlainText))" -var="web_server_password=$((ConvertFrom-SecureString $WebServerPassword -AsPlainText))" --auto-approve
+cd ..
 
