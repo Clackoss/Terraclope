@@ -33,7 +33,8 @@ Your password must meet azure credential complexity (one lower, one upper, one a
 After the terrafrom execution your site is accessible at **http://Public_ip_in_output** 
 
 To delete terraclope use *./destory.ps1* script
-If no powershell, use the same command but change *terraform apply* by *terraform destroy*
+
+If no powershell installed, use the same command but change *terraform apply* by *terraform destroy*
 
 ## How to custom the web template ?
 To change de web site, connect to the web-server vm using ssh.
@@ -59,7 +60,8 @@ Nb : A file named 'index.html' must be present on the folder /var/www/html/
 
 ## Security Point
 **Warring, this architecture is not as secure as it could.**
-If you want to improve the security you can start by changes this points : 
+
+If you want to improve the security you can start by changing this points : 
 1. ssh is accessible from the internet on reverse proxy.
 2. both vm has ssh authentication via password enabled (should be ssh key)
 3. Vm's are not hardened and the os is not at the latest version
@@ -68,4 +70,5 @@ If you want to improve the security you can start by changes this points :
 
 ## Note
 This is just a little projet for fun :)
+
 Developped by Maxime BOUDIER
