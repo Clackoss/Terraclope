@@ -39,6 +39,7 @@ while (!$ArePasswordOk) {
 
 #Deploy Terraclope
 cd ./terraclope-infra
+terraform.exe init
 terraform.exe apply -var="reverse_proxy_password=$((ConvertFrom-SecureString $reverseProxyPassword -AsPlainText))" -var="web_server_password=$((ConvertFrom-SecureString $WebServerPassword -AsPlainText))" --auto-approve
 cd ..
 
