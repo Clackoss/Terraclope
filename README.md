@@ -30,7 +30,10 @@ terraform apply -var="reverse_proxy_password=YOUR_PASSWORD_HERE" -var="web_serve
 ```
 Your password must meet azure credential complexity (one lower, one upper, one alphanumeric, one number)
 
-After the terrafrom exection your site is accessible at **http://Public_ip_in_output** 
+After the terrafrom execution your site is accessible at **http://Public_ip_in_output** 
+
+To delete terraclope use *./destory.ps1* script
+If no powershell, use the same command but change *terraform apply* by *terraform destroy*
 
 ## How to custom the web template ?
 To change de web site, connect to the web-server vm using ssh.
