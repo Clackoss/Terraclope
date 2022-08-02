@@ -67,7 +67,7 @@ If you want to improve the security you can start by changes this points :
 5. Disable debugg logs on nginx/apache
 
 ## To summarize :)
-![image info](./img/Terraclope.png)
+![image info](./img/terraclopePkmn.PNG)
 
 
 ## Note
